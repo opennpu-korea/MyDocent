@@ -34,3 +34,13 @@ class KotaemonClient:
             return resp.json()
         except Exception:
             return {"status": "ok", "raw": resp.text}
+
+    def query_vectors(self, namespace: str, query_vector: Iterable[float], top_k: int = 3) -> Dict[str, Any]:
+        url = f"{self.endpoint}/query"
+        payload = {"namespace": namespace, "query_vector": list(query_vector), "top_k": top_k}
+        resp = requests.post(url, headers=self._headers(), json=payload, timeout=self.timeout)
+        resp.raise_for_status()
+        try:
+            return resp.json()
+        except Exception:
+            return {"matches": [], "raw": resp.text}
